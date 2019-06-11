@@ -21,7 +21,7 @@ type DHCPPool struct {
 	ctx      context.Context
 }
 
-func NewDHCPPool(capacity uint64, context context.Context) *DHCPPool {
+func NewDHCPPool(context context.Context, capacity uint64) *DHCPPool {
 	log.SetProcessName("pfdhcp")
 	ctx := log.LoggerNewContext(context)
 	d := &DHCPPool{
