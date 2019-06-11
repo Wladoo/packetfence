@@ -52,6 +52,7 @@ var webservices pfconfigdriver.PfConfWebservices
 
 var intNametoInterface map[string]*Interface
 
+// StatsdClient gLocal statsd client
 var StatsdClient *statsd.Client
 
 const FreeMac = "00:00:00:00:00:00"
