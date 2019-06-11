@@ -26,6 +26,7 @@ import (
 	"github.com/inverse-inc/packetfence/go/sharedutils"
 	"github.com/inverse-inc/packetfence/go/timedlock"
 	dhcp "github.com/krolaw/dhcp4"
+	statsd "gopkg.in/alexcesaro/statsd.v2"
 )
 
 var DHCPConfig *Interfaces
@@ -50,6 +51,8 @@ var ctx = context.Background()
 var webservices pfconfigdriver.PfConfWebservices
 
 var intNametoInterface map[string]*Interface
+
+var StatsdClient *statsd.Client
 
 const FreeMac = "00:00:00:00:00:00"
 const FakeMac = "ff:ff:ff:ff:ff:ff"
@@ -103,6 +106,27 @@ func main() {
 			DHCPConfig.detectVIP(sharedutils.RemoveDuplicates(append(interfaces.Element, int_dhcp...)))
 
 			time.Sleep(3 * time.Second)
+		}
+	}()
+
+	go func() {
+		var err error
+		var connected bool
+
+		for !connected {
+			var keyConfAdvanced pfconfigdriver.PfConfAdvanced
+			keyConfAdvanced.PfconfigNS = "config::Pf"
+			keyConfAdvanced.PfconfigHostnameOverlay = "yes"
+			pfconfigdriver.FetchDecodeSocket(ctx, &keyConfAdvanced)
+			Options := statsd.Address("localhost:" + keyConfAdvanced.StatsdListenPort)
+
+			StatsdClient, err = statsd.New(Options)
+			if err != nil {
+				log.LoggerWContext(ctx).Error("Error while creating statsd client: " + err.Error())
+				time.Sleep(1 * time.Second)
+			} else {
+				connected = true
+			}
 		}
 	}()
 
