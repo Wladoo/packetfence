@@ -2,7 +2,7 @@ repo_name: Wladoo/packetfence
 report_id: 71e335ec31c2d0c150c9c84d676d4bab
 version: 0.1
 repo_type: Public
-timestamp: '2024-02-25T10:27:53+00:00'
+timestamp: '2024-02-29T20:12:32+00:00'
 requested_by: fdurand
 provider: github
 branch: devel
